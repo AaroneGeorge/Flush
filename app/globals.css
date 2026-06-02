@@ -1,0 +1,102 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-inter: "Inter", system-ui, sans-serif;
+  --accent-mint: #a8e6b0;
+  --accent-coral: #f26d6d;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  background: #000;
+  color: #fff;
+  overscroll-behavior: none;
+}
+
+body {
+  font-family: var(--font-inter);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Hide scrollbars but keep scroll */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.snap-x-mandatory {
+  scroll-snap-type: x mandatory;
+}
+.snap-center {
+  scroll-snap-align: center;
+}
+
+/* Frosted surface */
+.surface {
+  background: linear-gradient(180deg, #1c1d21 0%, #161719 100%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.surface-flat {
+  background: #16171a;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Numeral feel — thin, wide */
+.numeral {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* Felt radial used behind the poker table */
+.felt {
+  background:
+    radial-gradient(120% 80% at 50% 30%, rgba(168, 230, 176, 0.04), transparent 60%),
+    #000;
+}
+
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(168, 230, 176, 0.5);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(168, 230, 176, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(168, 230, 176, 0);
+  }
+}
+.turn-pulse {
+  animation: pulse-ring 1.6s ease-out infinite;
+}
+
+/* Range slider thumb (bet slider) */
+.flush-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 9999px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+.flush-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 9999px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
