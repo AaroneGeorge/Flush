@@ -2,6 +2,8 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { Player } from "@/lib/poker/engine";
+import { Card } from "@/lib/poker/types";
+import { PlayingCard } from "./PlayingCard";
 import { formatChips } from "@/lib/utils/format";
 import { cn } from "@/lib/utils/cn";
 
@@ -22,21 +24,42 @@ export function OpponentSeat({
   active,
   isDealer,
   isWinner,
+  revealCards,
+  revealLabel,
 }: {
   player: Player;
   active: boolean;
   isDealer: boolean;
   isWinner: boolean;
+  /** When set (showdown), show this player's hole cards so others can verify. */
+  revealCards?: Card[];
+  revealLabel?: string;
 }) {
   const dimmed = player.folded || player.sittingOut;
+  const showReveal = !!revealCards && revealCards.length === 2;
 
   return (
     <div className="relative flex w-16 flex-shrink-0 flex-col items-center gap-1">
-      {/* action / bet bubble */}
-      <div className="h-4">
-        <AnimatePresence>
-          {player.bet > 0 && (
+      {/* revealed hole cards (showdown) — falls back to the bet bubble otherwise */}
+      <div className="flex h-8 items-end justify-center">
+        <AnimatePresence mode="wait">
+          {showReveal ? (
             <motion.div
+              key="reveal"
+              initial={{ opacity: 0, y: 6, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              className="flex"
+            >
+              <div className="rotate-[-8deg]">
+                <PlayingCard card={revealCards![0]} size="sm" index={0} />
+              </div>
+              <div className="-ml-3.5 rotate-[8deg]">
+                <PlayingCard card={revealCards![1]} size="sm" index={1} />
+              </div>
+            </motion.div>
+          ) : player.bet > 0 ? (
+            <motion.div
+              key="bet"
               initial={{ opacity: 0, y: 4, scale: 0.8 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0 }}
@@ -44,7 +67,7 @@ export function OpponentSeat({
             >
               {formatChips(player.bet)}
             </motion.div>
-          )}
+          ) : null}
         </AnimatePresence>
       </div>
 
@@ -64,7 +87,7 @@ export function OpponentSeat({
             D
           </span>
         )}
-        {player.lastAction && active === false && player.bet === 0 && !player.folded && (
+        {player.lastAction && active === false && player.bet === 0 && !player.folded && !showReveal && (
           <span className="absolute -top-1 left-1/2 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-pill bg-ink-600 px-1.5 py-0.5 text-[9px] text-white/70">
             {player.lastAction}
           </span>
@@ -79,14 +102,20 @@ export function OpponentSeat({
       >
         {player.name}
       </p>
-      <p
-        className={cn(
-          "numeral text-[13px] font-semibold leading-none",
-          player.stack <= 0 ? "text-coral" : dimmed ? "text-muted-dim" : "text-white"
-        )}
-      >
-        {formatChips(player.stack)}
-      </p>
+      {showReveal && revealLabel ? (
+        <p className="max-w-[68px] truncate text-[9px] font-semibold text-mint">
+          {revealLabel}
+        </p>
+      ) : (
+        <p
+          className={cn(
+            "numeral text-[13px] font-semibold leading-none",
+            player.stack <= 0 ? "text-coral" : dimmed ? "text-muted-dim" : "text-white"
+          )}
+        >
+          {formatChips(player.stack)}
+        </p>
+      )}
     </div>
   );
 }

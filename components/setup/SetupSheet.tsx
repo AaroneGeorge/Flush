@@ -87,7 +87,7 @@ export function SetupSheet({
     const params = new URLSearchParams({
       mode: mode.id,
       buyIn: String(mode.maxBuyIn),
-      seats: "5",
+      seats: "6",
       public: isPublic ? "1" : "0",
     });
     router.push(`/room/${roomId}?${params.toString()}`);

@@ -14,6 +14,9 @@ import { useGameStore } from "@/lib/store/gameStore";
 import { useSoundStore } from "@/lib/sound/sounds";
 import { modeById } from "@/lib/data/modes";
 import { formatChips } from "@/lib/utils/format";
+import { evaluate } from "@/lib/poker/evaluator";
+import { Player } from "@/lib/poker/engine";
+import { Card } from "@/lib/poker/types";
 
 export default function RoomPage({
   params,
@@ -32,7 +35,7 @@ export default function RoomPage({
   useEffect(() => {
     const mode = modeById(search.get("mode") ?? "micro");
     const buyIn = Number(search.get("buyIn")) || mode.maxBuyIn;
-    const seats = Number(search.get("seats")) || 5;
+    const seats = Math.min(6, Number(search.get("seats")) || 6);
     const isPublic = (search.get("public") ?? "1") === "1";
     init(mode, buyIn, seats, isPublic);
     return () => reset();
@@ -44,6 +47,24 @@ export default function RoomPage({
   const winnerIds = new Set(table?.winners?.map((w) => w.id) ?? []);
   const heroWon = !!hero && winnerIds.has(hero.id);
   const heroWin = table?.winners?.find((w) => w.id === hero?.id);
+
+  // At showdown, reveal hole cards of everyone still in the hand (didn't fold)
+  // so other players can verify the result.
+  const isShowdown = table?.stage === "showdown";
+  const handLabel = (hole: Card[]): string | undefined => {
+    if (!table) return undefined;
+    const cards = [...hole, ...table.board];
+    if (cards.length < 5) return undefined;
+    try {
+      return evaluate(cards).label;
+    } catch {
+      return undefined;
+    }
+  };
+  const shouldReveal = (p: Player) =>
+    isShowdown && !p.folded && !p.sittingOut && p.hole.length === 2;
+  const heroLabel =
+    hero && shouldReveal(hero) ? handLabel(hero.hole) : undefined;
 
   return (
     <div className="felt relative flex h-full flex-col">
@@ -85,10 +106,11 @@ export default function RoomPage({
         </div>
       </div>
 
-      {/* Opponents */}
-      <div className="no-scrollbar mt-2 flex items-start gap-1 overflow-x-auto px-3 pb-1">
+      {/* Opponents — up to 5 seats spread evenly across the rail */}
+      <div className="mt-2 flex flex-wrap items-start justify-center gap-x-2 gap-y-1 px-3 pb-1">
         {opponents.map((p) => {
           const idx = table!.players.findIndex((x) => x.id === p.id);
+          const reveal = shouldReveal(p);
           return (
             <OpponentSeat
               key={p.id}
@@ -96,10 +118,12 @@ export default function RoomPage({
               active={table!.currentIndex === idx && table!.stage !== "showdown"}
               isDealer={table!.dealerIndex === idx}
               isWinner={winnerIds.has(p.id)}
+              revealCards={reveal ? p.hole : undefined}
+              revealLabel={reveal ? handLabel(p.hole) : undefined}
             />
           );
         })}
-        <EmptySeat />
+        {opponents.length === 0 && <EmptySeat />}
       </div>
 
       {/* Board */}
@@ -155,6 +179,11 @@ export default function RoomPage({
                 <span className="numeral text-sm font-semibold">
                   {formatChips(hero.stack)}
                 </span>
+                {heroLabel && (
+                  <span className="rounded-pill bg-mint/15 px-2 py-0.5 text-[11px] font-semibold text-mint">
+                    {heroLabel}
+                  </span>
+                )}
               </div>
             )}
           </div>

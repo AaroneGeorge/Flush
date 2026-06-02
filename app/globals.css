@@ -80,6 +80,53 @@ body {
   animation: pulse-ring 1.6s ease-out infinite;
 }
 
+/* ── Playing card shine ─────────────────────────────────────────── */
+/* A slow diagonal gloss sweep used on card faces + backs. */
+@keyframes card-sheen {
+  0% {
+    transform: translateX(-130%) skewX(-18deg);
+  }
+  100% {
+    transform: translateX(230%) skewX(-18deg);
+  }
+}
+.card-sheen {
+  animation: card-sheen 4.5s ease-in-out infinite;
+}
+
+/* Foil shimmer that drifts across the card surface. */
+@keyframes foil-drift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+.card-foil {
+  background: linear-gradient(
+    115deg,
+    rgba(168, 230, 176, 0.16),
+    rgba(159, 216, 242, 0.1) 28%,
+    transparent 45%,
+    transparent 55%,
+    rgba(242, 109, 109, 0.12) 74%,
+    rgba(201, 168, 242, 0.16)
+  );
+  background-size: 220% 220%;
+  animation: foil-drift 6s ease-in-out infinite;
+}
+
+/* Desktop ambient felt behind the device frame. */
+.desktop-felt {
+  background:
+    radial-gradient(60% 50% at 18% 12%, rgba(168, 230, 176, 0.12), transparent 60%),
+    radial-gradient(55% 50% at 85% 85%, rgba(242, 109, 109, 0.12), transparent 60%),
+    radial-gradient(80% 60% at 50% 50%, rgba(159, 216, 242, 0.05), transparent 70%),
+    #050506;
+}
+
 /* Range slider thumb (bet slider) */
 .flush-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
