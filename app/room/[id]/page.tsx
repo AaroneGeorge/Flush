@@ -67,7 +67,7 @@ export default function RoomPage({
     hero && shouldReveal(hero) ? handLabel(hero.hole) : undefined;
 
   return (
-    <div className="felt relative flex h-full flex-col">
+    <div className="felt relative flex h-full flex-col lg:mx-auto lg:w-full lg:max-w-3xl">
       {/* Top bar */}
       <div className="flex items-center justify-between px-2 pt-3">
         <BackButton />

@@ -90,7 +90,9 @@ export default function HistoryPage() {
 
   return (
     <div className="flex h-full flex-col">
-      <main className="no-scrollbar flex-1 overflow-y-auto px-5 pt-6">
+      <main className="no-scrollbar flex-1 overflow-y-auto px-5 pt-6 lg:px-8 lg:pt-8">
+        {/* On wide screens, keep the activity list comfortably readable */}
+        <div className="lg:mx-auto lg:max-w-2xl">
         <h1 className="text-2xl font-semibold">Activity</h1>
 
         {/* Summary */}
@@ -136,6 +138,7 @@ export default function HistoryPage() {
             );
           })}
         </div>
+        </div>{/* end lg:max-w-2xl */}
       </main>
       <BottomNav />
     </div>

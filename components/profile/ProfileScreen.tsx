@@ -46,7 +46,8 @@ export function ProfileScreen() {
   };
 
   return (
-    <div className="no-scrollbar flex-1 overflow-y-auto px-5 pb-8 pt-6">
+    <div className="no-scrollbar flex-1 overflow-y-auto px-5 pb-8 pt-6 lg:px-8 lg:pt-8">
+      <div className="lg:mx-auto lg:max-w-xl">
       <h1 className="text-2xl font-semibold">Profile</h1>
 
       {/* Avatar + name */}
@@ -115,7 +116,7 @@ export function ProfileScreen() {
       {/* Avatar picker */}
       <section className="mt-7">
         <h2 className="mb-3 text-sm font-semibold text-white/80">Avatar</h2>
-        <div className="grid grid-cols-6 gap-2">
+        <div className="grid grid-cols-6 gap-2 lg:grid-cols-8">
           {AVATARS.map((a) => (
             <button
               key={a}
@@ -172,6 +173,7 @@ export function ProfileScreen() {
               : "Connect Wallet"}
         </button>
       </section>
+      </div>{/* end lg:max-w-xl */}
     </div>
   );
 }

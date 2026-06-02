@@ -9,7 +9,6 @@ function hexToRgba(hex: string, a: number) {
   return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
 }
 
-/** Stacked-chips mark, tinted per mode. Replaces the old emoji. */
 function ChipMark({ color }: { color: string }) {
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
@@ -22,21 +21,28 @@ function ChipMark({ color }: { color: string }) {
   );
 }
 
-// Suit watermark cycles so the five tiers feel distinct.
 const SUIT_WATERMARK = ["♠", "♦", "♥", "♣", "♠"];
 
-function HeroCard({ onSelect }: { onSelect: () => void }) {
+function HeroCard({
+  onSelect,
+  desktop,
+}: {
+  onSelect: () => void;
+  desktop?: boolean;
+}) {
+  const sizeClass = desktop
+    ? "h-full w-full"
+    : "snap-center h-44 w-[78%] flex-shrink-0";
   return (
     <button
       onClick={onSelect}
-      className="snap-center group relative flex h-44 w-[78%] flex-shrink-0 flex-col justify-between overflow-hidden rounded-card border border-mint/25 p-5 text-left"
+      className={`group relative flex flex-col justify-between overflow-hidden rounded-card border border-mint/25 p-5 text-left ${sizeClass}`}
       style={{
         background:
           "linear-gradient(150deg, #1c4d33 0%, #133a28 40%, #101417 100%)",
         boxShadow: "0 14px 34px -14px rgba(168,230,176,0.55)",
       }}
     >
-      {/* suit cluster watermark */}
       <span className="pointer-events-none absolute -bottom-6 -right-3 text-[150px] leading-none text-mint/10 select-none">
         ♣
       </span>
@@ -67,33 +73,33 @@ function ModeCard({
   mode,
   index,
   onSelect,
+  desktop,
 }: {
   mode: GameMode;
   index: number;
   onSelect: (m: GameMode) => void;
+  desktop?: boolean;
 }) {
   const { tint } = mode;
+  const sizeClass = desktop
+    ? "h-full w-full"
+    : "snap-center h-44 w-[78%] flex-shrink-0";
   return (
     <button
       onClick={() => onSelect(mode)}
-      className="snap-center relative flex h-44 w-[78%] flex-shrink-0 flex-col justify-between overflow-hidden rounded-card p-5 text-left"
+      className={`relative flex flex-col justify-between overflow-hidden rounded-card p-5 text-left ${sizeClass}`}
       style={{
-        background: `linear-gradient(155deg, ${hexToRgba(tint, 0.24)} 0%, ${hexToRgba(
-          tint,
-          0.06
-        )} 40%, #121316 80%)`,
+        background: `linear-gradient(155deg, ${hexToRgba(tint, 0.24)} 0%, ${hexToRgba(tint, 0.06)} 40%, #121316 80%)`,
         border: `1px solid ${hexToRgba(tint, 0.22)}`,
         boxShadow: `0 12px 30px -14px ${hexToRgba(tint, 0.6)}`,
       }}
     >
-      {/* large faint suit watermark */}
       <span
         className="pointer-events-none absolute -bottom-7 -right-2 text-[130px] leading-none select-none"
         style={{ color: hexToRgba(tint, 0.1) }}
       >
         {SUIT_WATERMARK[index % SUIT_WATERMARK.length]}
       </span>
-      {/* top gloss line */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/35 to-transparent" />
 
       <div className="relative flex items-start justify-between">
@@ -116,10 +122,7 @@ function ModeCard({
           <span className="text-[11px] uppercase tracking-wider text-white/45">
             Stakes
           </span>
-          <span
-            className="numeral text-base font-semibold"
-            style={{ color: tint }}
-          >
+          <span className="numeral text-base font-semibold" style={{ color: tint }}>
             {mode.smallBlind} / {mode.bigBlind}
           </span>
         </div>
@@ -147,13 +150,24 @@ export function ModeCarousel({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ delay: 0.1 }}
-      className="no-scrollbar snap-x-mandatory flex gap-3 overflow-x-auto px-5 py-1"
+      className="lg:h-full"
     >
-      <HeroCard onSelect={() => onSelect(MODES[0])} />
-      {MODES.map((m, i) => (
-        <ModeCard key={m.id} mode={m} index={i} onSelect={onSelect} />
-      ))}
-      <div className="w-2 flex-shrink-0" />
+      {/* ── Mobile: horizontal scroll strip (unchanged) ──────────── */}
+      <div className="no-scrollbar snap-x-mandatory flex gap-3 overflow-x-auto px-5 py-1 lg:hidden">
+        <HeroCard onSelect={() => onSelect(MODES[0])} />
+        {MODES.map((m, i) => (
+          <ModeCard key={m.id} mode={m} index={i} onSelect={onSelect} />
+        ))}
+        <div className="w-2 flex-shrink-0" />
+      </div>
+
+      {/* ── Desktop: 3-column grid, rows share a capped height ─── */}
+      <div className="hidden lg:grid lg:h-[490px] lg:auto-rows-fr lg:grid-cols-3 lg:gap-4 lg:px-8">
+        <HeroCard onSelect={() => onSelect(MODES[0])} desktop />
+        {MODES.map((m, i) => (
+          <ModeCard key={m.id} mode={m} index={i} onSelect={onSelect} desktop />
+        ))}
+      </div>
     </motion.div>
   );
 }
