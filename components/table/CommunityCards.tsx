@@ -20,7 +20,7 @@ export function CommunityCards({
   const inHand = stage !== "idle";
 
   return (
-    <div className="relative flex flex-col items-center">
+    <div className="relative flex w-full flex-col items-center">
       <div className="flex items-center justify-center gap-1.5">
         {Array.from({ length: 5 }).map((_, i) => {
           if (i < revealed) {
@@ -40,14 +40,15 @@ export function CommunityCards({
         })}
       </div>
 
+      {/* Pot — right-aligned to the screen edge, mirroring the reference */}
       <motion.div
         key={pot}
         initial={{ scale: 0.9, opacity: 0.6 }}
         animate={{ scale: 1, opacity: 1 }}
-        className="mt-3 flex items-center gap-1.5"
+        className="mt-2.5 flex w-full flex-col items-end pr-1"
       >
-        <span className="text-xs text-muted">Pot</span>
-        <span className="numeral text-lg font-semibold text-white">
+        <span className="text-[11px] uppercase tracking-wide text-muted">Pot</span>
+        <span className="numeral text-2xl font-bold text-white">
           {formatChips(pot)}
         </span>
       </motion.div>

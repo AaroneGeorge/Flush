@@ -12,14 +12,6 @@ import { MODES } from "@/lib/data/modes";
 import { formatChips } from "@/lib/utils/format";
 import { cn } from "@/lib/utils/cn";
 
-const SUIT_BY_MODE: Record<string, string> = {
-  micro: "♣",
-  low: "♦",
-  mid: "♥",
-  high: "♠",
-  nosebleed: "♦",
-};
-
 function modeName(id: string) {
   return MODES.find((m) => m.id === id)?.name ?? id;
 }
@@ -49,7 +41,6 @@ function StatCard({
 }
 
 function Row({ entry, i }: { entry: ActivityEntry; i: number }) {
-  const tint = ACTIVITY_META.tint(entry.modeId);
   const win = entry.result === "win";
   return (
     <motion.div
@@ -58,17 +49,17 @@ function Row({ entry, i }: { entry: ActivityEntry; i: number }) {
       transition={{ delay: 0.03 * i }}
       className="flex items-center gap-3 py-3"
     >
+      {/* slim win/loss accent in place of the old suit glyph */}
       <span
-        className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl text-lg"
-        style={{ background: `${tint}1f`, color: tint }}
-      >
-        {SUIT_BY_MODE[entry.modeId] ?? "♠"}
-      </span>
+        className={cn(
+          "h-9 w-1 flex-shrink-0 rounded-full",
+          win ? "bg-mint" : "bg-coral"
+        )}
+      />
 
       <div className="min-w-0 flex-1">
         <p className="truncate text-[15px] font-medium leading-tight">
-          {win ? "Won with" : "Lost —"}{" "}
-          <span className={win ? "text-white" : "text-white/70"}>{entry.hand}</span>
+          {entry.hand}
         </p>
         <p className="mt-0.5 truncate text-xs text-muted">
           {modeName(entry.modeId)} · {ACTIVITY_META.stakes(entry.modeId)} ·{" "}
@@ -124,7 +115,6 @@ export default function HistoryPage() {
               {formatChips(s.biggestPot)}
             </p>
           </div>
-          <span className="text-3xl text-mint/40">♠</span>
         </div>
 
         {/* Grouped hand feed */}

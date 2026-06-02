@@ -34,21 +34,16 @@ export function HandRankingsSheet({
 }) {
   return (
     <Sheet open={open} onClose={onClose} title="Hand rankings">
-      <div className="no-scrollbar max-h-[70vh] space-y-1 overflow-y-auto pb-2">
+      <div className="divide-y divide-white/5">
         {RANKINGS.map((r) => (
-          <div
-            key={r.name}
-            className="flex items-center gap-3 rounded-2xl px-1 py-2"
-          >
-            <div className="flex shrink-0">
+          <div key={r.name} className="flex items-center gap-3 py-1.5">
+            <div className="flex shrink-0 gap-1">
               {r.cards.map((c, i) => (
-                <div key={i} className={i === 0 ? "" : "-ml-3.5"}>
-                  <PlayingCard card={c} size="sm" animate={false} />
-                </div>
+                <PlayingCard key={i} card={c} size="sm" animate={false} />
               ))}
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-semibold">{r.name}</p>
+              <p className="text-sm font-semibold leading-tight">{r.name}</p>
               <p className="truncate text-xs text-muted">{r.desc}</p>
             </div>
           </div>
