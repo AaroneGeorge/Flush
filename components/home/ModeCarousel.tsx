@@ -9,17 +9,6 @@ function hexToRgba(hex: string, a: number) {
   return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
 }
 
-function ChipMark({ color }: { color: string }) {
-  return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-      <ellipse cx="12" cy="17.5" rx="7.5" ry="3" fill={color} opacity="0.35" />
-      <ellipse cx="12" cy="14.5" rx="7.5" ry="3" stroke={color} strokeWidth="1.6" />
-      <ellipse cx="12" cy="11" rx="7.5" ry="3" stroke={color} strokeWidth="1.6" />
-      <ellipse cx="12" cy="7.5" rx="7.5" ry="3" fill={color} opacity="0.18" stroke={color} strokeWidth="1.6" />
-      <path d="M12 5.2v1.4M7 7.1l.9.8M17 7.1l-.9.8" stroke={color} strokeWidth="1.4" strokeLinecap="round" />
-    </svg>
-  );
-}
 
 const SUIT_WATERMARK = ["♠", "♦", "♥", "♣", "♠"];
 
@@ -36,16 +25,18 @@ function HeroCard({
   return (
     <button
       onClick={onSelect}
-      className={`group relative flex flex-col justify-between overflow-hidden rounded-card border border-mint/25 p-5 text-left ${sizeClass}`}
+      className={`group relative flex flex-col justify-between overflow-hidden rounded-card border border-mint/25 p-5 text-left transition-all duration-200 hover:scale-[1.025] ${sizeClass}`}
       style={{
         background:
           "linear-gradient(150deg, #1c4d33 0%, #133a28 40%, #101417 100%)",
         boxShadow: "0 14px 34px -14px rgba(168,230,176,0.55)",
       }}
     >
-      <span className="pointer-events-none absolute -bottom-6 -right-3 text-[150px] leading-none text-mint/10 select-none">
+      <span className="pointer-events-none absolute bottom-4 right-4 text-[80px] leading-none text-mint/18 select-none">
         ♣
       </span>
+      <div className="pointer-events-none absolute inset-0 rounded-card opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+        style={{ background: "linear-gradient(155deg, rgba(168,230,176,0.08) 0%, transparent 60%)" }} />
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
 
       <div className="relative flex items-center gap-2">
@@ -87,7 +78,7 @@ function ModeCard({
   return (
     <button
       onClick={() => onSelect(mode)}
-      className={`relative flex flex-col justify-between overflow-hidden rounded-card p-5 text-left ${sizeClass}`}
+      className={`group relative flex flex-col justify-between overflow-hidden rounded-card p-5 text-left transition-all duration-200 hover:scale-[1.025] ${sizeClass}`}
       style={{
         background: `linear-gradient(155deg, ${hexToRgba(tint, 0.24)} 0%, ${hexToRgba(tint, 0.06)} 40%, #121316 80%)`,
         border: `1px solid ${hexToRgba(tint, 0.22)}`,
@@ -95,20 +86,18 @@ function ModeCard({
       }}
     >
       <span
-        className="pointer-events-none absolute -bottom-7 -right-2 text-[130px] leading-none select-none"
-        style={{ color: hexToRgba(tint, 0.1) }}
+        className="pointer-events-none absolute bottom-4 right-4 text-[80px] leading-none select-none"
+        style={{ color: hexToRgba(tint, 0.18) }}
       >
         {SUIT_WATERMARK[index % SUIT_WATERMARK.length]}
       </span>
+      <div
+        className="pointer-events-none absolute inset-0 rounded-card opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+        style={{ background: `linear-gradient(155deg, ${hexToRgba(tint, 0.1)} 0%, transparent 60%)` }}
+      />
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/35 to-transparent" />
 
-      <div className="relative flex items-start justify-between">
-        <span
-          className="flex h-9 w-9 items-center justify-center rounded-xl"
-          style={{ background: hexToRgba(tint, 0.14) }}
-        >
-          <ChipMark color={tint} />
-        </span>
+      <div className="relative">
         <span
           className="rounded-pill px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide"
           style={{ background: hexToRgba(tint, 0.18), color: tint }}
@@ -117,7 +106,7 @@ function ModeCard({
         </span>
       </div>
 
-      <div className="relative space-y-1.5">
+      <div className="relative space-y-1">
         <div className="flex items-center justify-between">
           <span className="text-[11px] uppercase tracking-wider text-white/45">
             Stakes
@@ -126,12 +115,11 @@ function ModeCard({
             {mode.smallBlind} / {mode.bigBlind}
           </span>
         </div>
-        <div className="h-px bg-white/8" />
         <div className="flex items-center justify-between">
           <span className="text-[11px] uppercase tracking-wider text-white/45">
             Buy-in
           </span>
-          <span className="numeral text-base font-semibold text-white">
+          <span className="numeral text-sm font-semibold text-white/80">
             {formatChips(mode.minBuyIn)} – {formatChips(mode.maxBuyIn)}
           </span>
         </div>
